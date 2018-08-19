@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NovaAgendaAlunos</string>
+    <string name="tela_1">Lista Alunos</string>
 </resources>
