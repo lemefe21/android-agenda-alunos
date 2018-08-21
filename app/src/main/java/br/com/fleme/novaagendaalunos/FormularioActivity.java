@@ -10,15 +10,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import br.com.fleme.novaagendaalunos.helper.FormularioHelper;
+import br.com.fleme.novaagendaalunos.model.Aluno;
+
 public class FormularioActivity extends AppCompatActivity {
+
+    private FormularioHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario);
 
-        Log.i("LOG_AGENDA", "onCreate - FormularioActivity");
+        helper = new FormularioHelper(this);
 
+        Log.i("LOG_AGENDA", "onCreate - FormularioActivity");
     }
 
     @Override
@@ -32,7 +38,12 @@ public class FormularioActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.menu_formulario_ok:
-                Toast.makeText(FormularioActivity.this, "Botão Salvar clicado!", Toast.LENGTH_SHORT).show();
+
+                Log.i("LOG_AGENDA", "Click - Menu menu_formulario_ok");
+
+                Aluno aluno = helper.pegaAluno();
+                Toast.makeText(FormularioActivity.this, "Aluno " + aluno.getNome() + " salvo com sucesso!", Toast.LENGTH_SHORT).show();
+
                 finish();
                 break;
         }
