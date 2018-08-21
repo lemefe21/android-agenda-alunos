@@ -2,6 +2,7 @@ package br.com.fleme.novaagendaalunos;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,11 +14,14 @@ public class FormularioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario);
 
+        Log.i("LOG_AGENDA", "onCreate - FormularioActivity");
+
         Button botaoSalvar = findViewById(R.id.formulario_salvar);
         botaoSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(FormularioActivity.this, "Botão Salvar clicado!", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
 
