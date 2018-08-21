@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.helper.FormularioHelper;
 import br.com.fleme.novaagendaalunos.model.Aluno;
 
@@ -43,6 +44,10 @@ public class FormularioActivity extends AppCompatActivity {
 
                 Aluno aluno = helper.pegaAluno();
                 Toast.makeText(FormularioActivity.this, "Aluno " + aluno.getNome() + " salvo com sucesso!", Toast.LENGTH_SHORT).show();
+
+                AlunoDAO dao = new AlunoDAO(this);
+                dao.insere(aluno);
+                dao.close();
 
                 finish();
                 break;
