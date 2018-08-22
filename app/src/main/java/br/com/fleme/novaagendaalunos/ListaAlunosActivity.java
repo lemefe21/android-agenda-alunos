@@ -32,6 +32,24 @@ public class ListaAlunosActivity extends AppCompatActivity {
         Log.i("LOG_AGENDA", "onCreate - ListaAlunosActivity");
 
         listaAlunosView = findViewById(R.id.lista_alunos);
+        listaAlunosView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> lista, View itemLista, int position, long id) {
+                Log.i("LOG_AGENDA", "OnItemClickListener - " + position + " - ListaAlunosActivity");
+
+                Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(position);
+                Toast.makeText(ListaAlunosActivity.this, "Aluno " + aluno.getNome() + " clicado!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        listaAlunosView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("LOG_AGENDA", "OnItemLongClickListener - " + position + " - ListaAlunosActivity");
+                //return true; >> não passa o evento para frente (ex: Menu de contexto ou clique simples em seguida)
+                return false;
+            }
+        });
 
         Button novoAluno = findViewById(R.id.lista_btn_adicionar);
         novoAluno.setOnClickListener(new View.OnClickListener() {
