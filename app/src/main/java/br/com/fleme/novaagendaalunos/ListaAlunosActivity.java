@@ -24,14 +24,6 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         Log.i("LOG_AGENDA", "onCreate - ListaAlunosActivity");
 
-        AlunoDAO dao = new AlunoDAO(this);
-        List<Aluno> alunos = dao.buscaAlunos();
-        dao.close();
-
-        ListView listaAlunosView = findViewById(R.id.lista_alunos);
-        ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
-        listaAlunosView.setAdapter(adapter);
-
         Button novoAluno = findViewById(R.id.lista_btn_adicionar);
         novoAluno.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,5 +34,57 @@ public class ListaAlunosActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void carregaLista() {
+        Log.i("LOG_AGENDA", "carregaLista - ListaAlunosActivity");
+
+        AlunoDAO dao = new AlunoDAO(this);
+        List<Aluno> alunos = dao.buscaAlunos();
+        dao.close();
+
+        ListView listaAlunosView = findViewById(R.id.lista_alunos);
+        ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
+        listaAlunosView.setAdapter(adapter);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("LOG_AGENDA", "onStart - ListaAlunosActivity");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("LOG_AGENDA", "onResume - ListaAlunosActivity");
+
+        carregaLista();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //activity parcialmente visivel, por exemplo ao abrir um pop-up
+        Log.i("LOG_AGENDA", "onPause - ListaAlunosActivity");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("LOG_AGENDA", "onStop - ListaAlunosActivity");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("LOG_AGENDA", "onRestart - ListaAlunosActivity");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("LOG_AGENDA", "onDestroy - ListaAlunosActivity");
     }
 }
