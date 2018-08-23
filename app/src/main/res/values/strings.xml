@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NovaAgendaAlunos</string>
     <string name="tela_1">Lista Alunos</string>
+    <string name="btn_add_aluno">+</string>
 </resources>
