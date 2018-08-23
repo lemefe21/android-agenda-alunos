@@ -35,13 +35,16 @@ public class ListaAlunosActivity extends AppCompatActivity {
         listaAlunosView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> lista, View itemLista, int position, long id) {
-                Log.i("LOG_AGENDA", "OnItemClickListener - " + position + " - ListaAlunosActivity");
 
                 Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(position);
-                Toast.makeText(ListaAlunosActivity.this, "Aluno " + aluno.getNome() + " clicado!", Toast.LENGTH_SHORT).show();
+                Log.i("LOG_AGENDA", "OnItemClickListener - " + position + " - ListaAlunosActivity - " + aluno.getNome());
+
+                Intent intentAlunoProFormulario = new Intent(ListaAlunosActivity.this, FormularioActivity.class);
+                intentAlunoProFormulario.putExtra("aluno_selecionado", aluno);
+                startActivity(intentAlunoProFormulario);
+
             }
         });
-
         listaAlunosView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

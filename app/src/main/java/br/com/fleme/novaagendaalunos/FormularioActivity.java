@@ -1,5 +1,6 @@
 package br.com.fleme.novaagendaalunos;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import java.io.Serializable;
 
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.helper.FormularioHelper;
@@ -22,10 +25,16 @@ public class FormularioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario);
+        Log.i("LOG_AGENDA", "onCreate - FormularioActivity");
 
         helper = new FormularioHelper(this);
 
-        Log.i("LOG_AGENDA", "onCreate - FormularioActivity");
+        Intent intent = getIntent();
+        Aluno aluno = (Aluno) intent.getSerializableExtra("aluno_selecionado");
+        if(aluno != null) {
+            helper.preencheFormulario(aluno);
+        }
+
     }
 
     @Override
