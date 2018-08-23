@@ -5,13 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
-
-import java.io.Serializable;
 
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.helper.FormularioHelper;
@@ -51,11 +46,18 @@ public class FormularioActivity extends AppCompatActivity {
 
                 Log.i("LOG_AGENDA", "Click - Menu menu_formulario_ok");
 
-                Aluno aluno = helper.pegaAluno();
-                Toast.makeText(FormularioActivity.this, "Aluno " + aluno.getNome() + " salvo com sucesso!", Toast.LENGTH_SHORT).show();
+                //se o aluno veio pela Intent ele já possui um id
+                // objeto é atualizado no preencheFormulario do helper
+                Aluno aluno = helper.pegaAlunoDoFormulario();
 
                 AlunoDAO dao = new AlunoDAO(this);
-                dao.insere(aluno);
+                if(aluno.getId() != null) {
+                    dao.altera(aluno);
+                    Toast.makeText(FormularioActivity.this, "Aluno " + aluno.getNome() + " atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+                } else {
+                    dao.insere(aluno);
+                    Toast.makeText(FormularioActivity.this, "Aluno " + aluno.getNome() + " salvo com sucesso!", Toast.LENGTH_SHORT).show();
+                }
                 dao.close();
 
                 finish();
