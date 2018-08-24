@@ -1,6 +1,7 @@
 package br.com.fleme.novaagendaalunos;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -80,15 +81,26 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenu.ContextMenuInfo menuInfo) {
+
+        //a view usa o adapter para mostrar os itens
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        final Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
+
+        MenuItem menuSite = menu.add("Visitar site");
+        Toast.makeText(ListaAlunosActivity.this, "Carregando site " + aluno.getSite() + " do aluno...", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String site = aluno.getSite();
+        if(!site.startsWith("http://")) {
+            site = "http://" + site;
+        }
+        intent.setData(Uri.parse(site));
+        menuSite.setIntent(intent);
+
         MenuItem deletar = menu.add("Deletar");
         deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Log.i("LOG_AGENDA", "onMenuItemClick - ListaAlunosActivity");
-
-                //a view usa o adapter para mostrar os itens
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-                Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
 
                 AlunoDAO dao = new AlunoDAO(ListaAlunosActivity.this);
                 dao.remover(aluno);
@@ -96,11 +108,12 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
                 carregaLista();
 
-                Toast.makeText(ListaAlunosActivity.this, "Aluno " + aluno.getNome() + " excluído!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListaAlunosActivity.this, "Aluno " + aluno.getNome() + " removido!", Toast.LENGTH_SHORT).show();
 
                 return false;
             }
         });
+
     }
 
     @Override
