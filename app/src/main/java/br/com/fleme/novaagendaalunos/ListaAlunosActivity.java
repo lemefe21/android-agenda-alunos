@@ -87,7 +87,6 @@ public class ListaAlunosActivity extends AppCompatActivity {
         final Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
 
         MenuItem menuSite = menu.add("Visitar site");
-        Toast.makeText(ListaAlunosActivity.this, "Carregando site " + aluno.getSite() + " do aluno...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Intent.ACTION_VIEW);
         String site = aluno.getSite();
         if(!site.startsWith("http://")) {
