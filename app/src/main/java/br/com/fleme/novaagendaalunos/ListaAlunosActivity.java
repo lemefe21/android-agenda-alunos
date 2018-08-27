@@ -1,7 +1,11 @@
 package br.com.fleme.novaagendaalunos;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +26,7 @@ import br.com.fleme.novaagendaalunos.model.Aluno;
 public class ListaAlunosActivity extends AppCompatActivity {
 
     private ListView listaAlunosView;
+    private final int MY_PERMISSION_CALL_PHONE = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +91,28 @@ public class ListaAlunosActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
 
+        MenuItem itemLigar = menu.add("Ligar");
+        itemLigar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                Log.i("LOG_AGENDA", "onMenuItemClick- Ligar - ListaAlunosActivity");
+
+                if(ActivityCompat.checkSelfPermission(ListaAlunosActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    //nesse momento se a permissão ainda não foi dada pelo usuário, iremos solicitar
+                    Log.i("LOG_AGENDA", "permission.CALL_PHONE - Not PERMISSION_GRANTED");
+                    ActivityCompat.requestPermissions(ListaAlunosActivity.this, new String[]{Manifest.permission.CALL_PHONE}, MY_PERMISSION_CALL_PHONE);
+                } else {
+                    Log.i("LOG_AGENDA", "permission.CALL_PHONE - PERMISSION_GRANTED");
+                    Intent intentLigar = new Intent(Intent.ACTION_CALL);
+                    intentLigar.setData(Uri.parse("tel:" + aluno.getTelefone()));
+                    startActivity(intentLigar);
+                }
+                return false;
+
+            }
+        });
+
         MenuItem itemSMS = menu.add("Enviar SMS");
         Intent intentSMS = new Intent(Intent.ACTION_VIEW);
         intentSMS.setData(Uri.parse("sms:" + aluno.getTelefone()));
@@ -105,8 +132,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
         intentSite.setData(Uri.parse(site));
         menuSite.setIntent(intentSite);
 
-        MenuItem deletar = menu.add("Deletar");
-        deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        MenuItem itemDeletar = menu.add("Deletar");
+        itemDeletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Log.i("LOG_AGENDA", "onMenuItemClick - ListaAlunosActivity");
@@ -122,6 +149,24 @@ public class ListaAlunosActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //método chamado após o usuário ter dado alguma permissão na activity atual
+        //identificamos qual foi de acordo com o requestCode
+
+        switch (requestCode) {
+            case MY_PERMISSION_CALL_PHONE: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i("LOG_AGENDA", "onRequestPermissionsResult - requestCode of CALL_PHONE - GRANTED");
+                } else {
+                    Log.i("LOG_AGENDA", "onRequestPermissionsResult - requestCode of CALL_PHONE - Cancel");
+                }
+            }
+        }
 
     }
 
