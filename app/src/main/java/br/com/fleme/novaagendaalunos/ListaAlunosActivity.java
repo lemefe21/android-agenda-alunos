@@ -27,6 +27,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
     private ListView listaAlunosView;
     private final int MY_PERMISSION_CALL_PHONE = 123;
+    private Aluno aluno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,27 +90,15 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         //a view usa o adapter para mostrar os itens
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
+        aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
 
         MenuItem itemLigar = menu.add("Ligar");
         itemLigar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
                 Log.i("LOG_AGENDA", "onMenuItemClick- Ligar - ListaAlunosActivity");
-
-                if(ActivityCompat.checkSelfPermission(ListaAlunosActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    //nesse momento se a permissão ainda não foi dada pelo usuário, iremos solicitar
-                    Log.i("LOG_AGENDA", "permission.CALL_PHONE - Not PERMISSION_GRANTED");
-                    ActivityCompat.requestPermissions(ListaAlunosActivity.this, new String[]{Manifest.permission.CALL_PHONE}, MY_PERMISSION_CALL_PHONE);
-                } else {
-                    Log.i("LOG_AGENDA", "permission.CALL_PHONE - PERMISSION_GRANTED");
-                    Intent intentLigar = new Intent(Intent.ACTION_CALL);
-                    intentLigar.setData(Uri.parse("tel:" + aluno.getTelefone()));
-                    startActivity(intentLigar);
-                }
+                ligarPara();
                 return false;
-
             }
         });
 
@@ -152,6 +141,19 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
     }
 
+    private void ligarPara() {
+        if(ActivityCompat.checkSelfPermission(ListaAlunosActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            //nesse momento se a permissão ainda não foi dada pelo usuário, iremos solicitar
+            Log.i("LOG_AGENDA", "permission.CALL_PHONE - Not PERMISSION_GRANTED");
+            ActivityCompat.requestPermissions(ListaAlunosActivity.this, new String[]{Manifest.permission.CALL_PHONE}, MY_PERMISSION_CALL_PHONE);
+        } else {
+            Log.i("LOG_AGENDA", "permission.CALL_PHONE - PERMISSION_GRANTED");
+            Intent intentLigar = new Intent(Intent.ACTION_CALL);
+            intentLigar.setData(Uri.parse("tel:" + aluno.getTelefone()));
+            startActivity(intentLigar);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -162,6 +164,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
             case MY_PERMISSION_CALL_PHONE: {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.i("LOG_AGENDA", "onRequestPermissionsResult - requestCode of CALL_PHONE - GRANTED");
+                    ligarPara();
                 } else {
                     Log.i("LOG_AGENDA", "onRequestPermissionsResult - requestCode of CALL_PHONE - Cancel");
                 }
