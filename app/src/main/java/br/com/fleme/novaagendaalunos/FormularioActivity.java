@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,12 +48,18 @@ public class FormularioActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Log.i("LOG_AGENDA", "onClick - botaoFoto - FormularioActivity");
+
                 Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 //devemos informar que queremos salvar a imagem dentro da pasta da nossa aplicação
                 //null >> subpastas
                 caminhoFoto = getExternalFilesDir(null) + "/" + System.currentTimeMillis() + ".jpg";
-                File arquivoFoto = new File(caminhoFoto);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(arquivoFoto));
+
+                File foto = new File(caminhoFoto);
+                //a partir do Android 7 o android não permite mais acesso aos conteúdo do nosso aplicativo por aplicativos externos (câmera)
+                //então utilizamos um content provider (FileProvider) para controlar o acesso
+                Uri contentUri = FileProvider.getUriForFile(FormularioActivity.this, BuildConfig.APPLICATION_ID + ".provider", foto);
+                intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                 //essa startActivity nos possibilita obter o resultado que a activity irá retornar
                 startActivityForResult(intentCamera, REQUEST_CODE_IMAGE_CAPTURE);
 
@@ -106,6 +113,7 @@ public class FormularioActivity extends AppCompatActivity {
             switch (requestCode) {
                 case REQUEST_CODE_IMAGE_CAPTURE:
 
+                    Log.i("LOG_AGENDA", "onActivityResult - RESULT_OK - REQUEST_CODE_IMAGE_CAPTURE");
                     ImageView foto = findViewById(R.id.formulario_foto);
                     Bitmap bitmap = BitmapFactory.decodeFile(caminhoFoto);
                     //bitmap não suporta imagens com resolução muito alta
