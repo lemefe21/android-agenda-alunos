@@ -56,7 +56,7 @@ public class FormularioActivity extends AppCompatActivity {
                 caminhoFoto = getExternalFilesDir(null) + "/" + System.currentTimeMillis() + ".jpg";
 
                 File foto = new File(caminhoFoto);
-                //a partir do Android 7 o android não permite mais acesso aos conteúdo do nosso aplicativo por aplicativos externos (câmera)
+                //a partir do Android 7 o android não permite mais o acesso ao conteúdo do nosso aplicativo por aplicativos externos (câmera)
                 //então utilizamos um content provider (FileProvider) para controlar o acesso
                 Uri contentUri = FileProvider.getUriForFile(FormularioActivity.this, BuildConfig.APPLICATION_ID + ".provider", foto);
                 intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
@@ -114,13 +114,7 @@ public class FormularioActivity extends AppCompatActivity {
                 case REQUEST_CODE_IMAGE_CAPTURE:
 
                     Log.i("LOG_AGENDA", "onActivityResult - RESULT_OK - REQUEST_CODE_IMAGE_CAPTURE");
-                    ImageView foto = findViewById(R.id.formulario_foto);
-                    Bitmap bitmap = BitmapFactory.decodeFile(caminhoFoto);
-                    //bitmap não suporta imagens com resolução muito alta
-                    Bitmap bitmapReduzido = Bitmap.createScaledBitmap(bitmap, 300, 300, true);
-                    foto.setImageBitmap(bitmapReduzido);
-                    //aumenta a imagem para ocupar o espaço total da sua view
-                    foto.setScaleType(ImageView.ScaleType.FIT_XY);
+                    helper.carregaImagem(caminhoFoto);
                     break;
 
             }
