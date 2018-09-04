@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import br.com.fleme.novaagendaalunos.adapter.AlunosAdapter;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.model.Aluno;
 
@@ -40,6 +41,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
         listaAlunosView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> lista, View itemLista, int position, long id) {
+                //id é informado pelo adapter utilizado
 
                 Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(position);
                 Log.i("LOG_AGENDA", "OnItemClickListener - " + position + " - ListaAlunosActivity - " + aluno.getNome());
@@ -80,7 +82,11 @@ public class ListaAlunosActivity extends AppCompatActivity {
         List<Aluno> alunos = dao.buscaAlunos();
         dao.close();
 
-        ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
+        //adapter >> responsável por converter os objetos do Java em um view do Android
+        //ArrayAdapter utiliza o toString do objeto Java para mostar a informação na View
+        //ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
+
+        AlunosAdapter adapter = new AlunosAdapter(alunos, this);
         listaAlunosView.setAdapter(adapter);
     }
 
