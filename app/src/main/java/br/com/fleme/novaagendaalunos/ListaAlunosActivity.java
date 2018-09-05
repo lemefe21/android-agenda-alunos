@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import br.com.fleme.novaagendaalunos.adapter.AlunosAdapter;
+import br.com.fleme.novaagendaalunos.converter.AlunoConverter;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.model.Aluno;
 
@@ -90,6 +92,34 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         AlunosAdapter adapter = new AlunosAdapter(alunos, this);
         listaAlunosView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_lista_alunos, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.menu_enviar_notas:
+                Toast.makeText(this, "Enviando notas...", Toast.LENGTH_SHORT).show();
+
+                AlunoDAO dao = new AlunoDAO(this);
+                List<Aluno> alunos = dao.buscaAlunos();
+                dao.close();
+
+                AlunoConverter conversor = new AlunoConverter();
+                String json = conversor.converteParaJSON(alunos);
+
+                Toast.makeText(this, json, Toast.LENGTH_SHORT).show();
+
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
