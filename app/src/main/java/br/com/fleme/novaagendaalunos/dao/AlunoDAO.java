@@ -108,4 +108,15 @@ public class AlunoDAO extends SQLiteOpenHelper {
         Log.i("LOG_AGENDA", "Alterar aluno - " + params[0] + " - SQLiteDatabase");
 
     }
+
+    public boolean ehAluno(String telefone) {
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM Alunos where telefone = ?", new String[]{telefone});
+        int resultados = c.getCount();
+        c.close();
+        return resultados > 0;
+
+    }
+
 }
