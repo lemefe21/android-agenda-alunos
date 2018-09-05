@@ -13,7 +13,6 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,6 +27,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
     private ListView listaAlunosView;
     private final int MY_PERMISSION_CALL_PHONE = 123;
+    private final int MY_RECEIVE_SMS = 456;
     private Aluno aluno;
 
     @Override
@@ -70,6 +70,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
                 startActivity(intentIrProFormulario);
             }
         });
+
+        verificaPermissaoRecebimentoSMS();
 
         registerForContextMenu(listaAlunosView);
 
@@ -156,6 +158,16 @@ public class ListaAlunosActivity extends AppCompatActivity {
             Intent intentLigar = new Intent(Intent.ACTION_CALL);
             intentLigar.setData(Uri.parse("tel:" + aluno.getTelefone()));
             startActivity(intentLigar);
+        }
+    }
+
+    private void verificaPermissaoRecebimentoSMS() {
+        if(ActivityCompat.checkSelfPermission(ListaAlunosActivity.this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            //nesse momento se a permissão ainda não foi dada pelo usuário, iremos solicitar
+            Log.i("LOG_AGENDA", "permission.RECEIVE_SMS - Not PERMISSION_GRANTED");
+            ActivityCompat.requestPermissions(ListaAlunosActivity.this, new String[]{Manifest.permission.RECEIVE_SMS}, MY_RECEIVE_SMS);
+        } else {
+            Log.i("LOG_AGENDA", "permission.RECEIVE_SMS - PERMISSION_GRANTED");
         }
     }
 
