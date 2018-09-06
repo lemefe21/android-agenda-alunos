@@ -24,6 +24,7 @@ import br.com.fleme.novaagendaalunos.adapter.AlunosAdapter;
 import br.com.fleme.novaagendaalunos.converter.AlunoConverter;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.model.Aluno;
+import br.com.fleme.novaagendaalunos.services.WebClient;
 
 public class ListaAlunosActivity extends AppCompatActivity {
 
@@ -97,6 +98,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_lista_alunos, menu);
+        Log.i("LOG_AGENDA", "onCreateOptionsMenu - ListaAlunosActivity");
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -105,6 +107,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.menu_enviar_notas:
+                Log.i("LOG_AGENDA", "menu_enviar_notas - ListaAlunosActivity");
                 Toast.makeText(this, "Enviando notas...", Toast.LENGTH_SHORT).show();
 
                 AlunoDAO dao = new AlunoDAO(this);
@@ -114,7 +117,11 @@ public class ListaAlunosActivity extends AppCompatActivity {
                 AlunoConverter conversor = new AlunoConverter();
                 String json = conversor.converteParaJSON(alunos);
 
-                Toast.makeText(this, json, Toast.LENGTH_SHORT).show();
+                Log.i("LOG_AGENDA", "json: " + json);
+
+                WebClient client = new WebClient();
+                String response = client.post(json);
+                Toast.makeText(this, response, Toast.LENGTH_SHORT).show();
 
                 break;
         }
