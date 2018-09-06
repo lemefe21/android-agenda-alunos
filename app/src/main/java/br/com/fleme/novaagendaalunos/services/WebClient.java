@@ -18,18 +18,19 @@ public class WebClient {
 
             URL url = new URL("https://www.caelum.com.br/mobile");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
             connection.setRequestProperty("Content-type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
 
             //vamos configurar o stream de saída para a requisição POST
+            //setDoOutput informa que estamos enviando os dados no body da requisição
             connection.setDoOutput(true);
             PrintStream output = new PrintStream(connection.getOutputStream());
             output.println(json);
-            
-            connection.connect();
-            Scanner input = new Scanner(connection.getInputStream());
 
+            Log.e("LOG_AGENDA", "WebClient - connecting... - post");
+            connection.connect();
+
+            Scanner input = new Scanner(connection.getInputStream());
             String response = input.next();
             return response;
 

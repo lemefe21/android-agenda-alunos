@@ -25,6 +25,7 @@ import br.com.fleme.novaagendaalunos.converter.AlunoConverter;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.model.Aluno;
 import br.com.fleme.novaagendaalunos.services.WebClient;
+import br.com.fleme.novaagendaalunos.tasks.EnviaAlunosTask;
 
 public class ListaAlunosActivity extends AppCompatActivity {
 
@@ -107,21 +108,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.menu_enviar_notas:
-                Log.i("LOG_AGENDA", "menu_enviar_notas - ListaAlunosActivity");
-                Toast.makeText(this, "Enviando notas...", Toast.LENGTH_SHORT).show();
 
-                AlunoDAO dao = new AlunoDAO(this);
-                List<Aluno> alunos = dao.buscaAlunos();
-                dao.close();
-
-                AlunoConverter conversor = new AlunoConverter();
-                String json = conversor.converteParaJSON(alunos);
-
-                Log.i("LOG_AGENDA", "json: " + json);
-
-                WebClient client = new WebClient();
-                String response = client.post(json);
-                Toast.makeText(this, response, Toast.LENGTH_SHORT).show();
+                new EnviaAlunosTask(this).execute();
 
                 break;
         }
