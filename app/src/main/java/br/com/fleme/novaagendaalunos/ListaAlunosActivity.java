@@ -1,26 +1,38 @@
 package br.com.fleme.novaagendaalunos;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import br.com.fleme.novaagendaalunos.adapter.AlunosAdapter;
+import br.com.fleme.novaagendaalunos.converter.AlunoConverter;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.model.Aluno;
+import br.com.fleme.novaagendaalunos.services.WebClient;
+import br.com.fleme.novaagendaalunos.tasks.EnviaAlunosTask;
 
 public class ListaAlunosActivity extends AppCompatActivity {
 
     private ListView listaAlunosView;
+    private final int MY_PERMISSION_CALL_PHONE = 123;
+    private final int MY_RECEIVE_SMS = 456;
+    private Aluno aluno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +45,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
         listaAlunosView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> lista, View itemLista, int position, long id) {
+                //id é informado pelo adapter utilizado
 
                 Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(position);
                 Log.i("LOG_AGENDA", "OnItemClickListener - " + position + " - ListaAlunosActivity - " + aluno.getNome());
@@ -62,6 +75,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
             }
         });
 
+        verificaPermissaoRecebimentoSMS();
+
         registerForContextMenu(listaAlunosView);
 
     }
@@ -73,22 +88,76 @@ public class ListaAlunosActivity extends AppCompatActivity {
         List<Aluno> alunos = dao.buscaAlunos();
         dao.close();
 
+        //adapter >> responsável por converter os objetos do Java em um view do Android
+        //ArrayAdapter utiliza o toString do objeto Java para mostar a informação na View
+        //ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
 
-        ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
+        AlunosAdapter adapter = new AlunosAdapter(alunos, this);
         listaAlunosView.setAdapter(adapter);
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_lista_alunos, menu);
+        Log.i("LOG_AGENDA", "onCreateOptionsMenu - ListaAlunosActivity");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+            case R.id.menu_enviar_notas:
+
+                new EnviaAlunosTask(this).execute();
+
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenu.ContextMenuInfo menuInfo) {
-        MenuItem deletar = menu.add("Deletar");
-        deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+        //a view usa o adapter para mostrar os itens
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
+
+        MenuItem itemLigar = menu.add("Ligar");
+        itemLigar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.i("LOG_AGENDA", "onMenuItemClick- Ligar - ListaAlunosActivity");
+                ligarPara();
+                return false;
+            }
+        });
+
+        MenuItem itemSMS = menu.add("Enviar SMS");
+        Intent intentSMS = new Intent(Intent.ACTION_VIEW);
+        intentSMS.setData(Uri.parse("sms:" + aluno.getTelefone()));
+        itemSMS.setIntent(intentSMS);
+
+        MenuItem itemMapa = menu.add("Visualizar no Mapa");
+        Intent intentMapa = new Intent(Intent.ACTION_VIEW);
+        intentMapa.setData(Uri.parse("geo:0,0?q=" + aluno.getEndereco()));
+        itemMapa.setIntent(intentMapa);
+
+        MenuItem menuSite = menu.add("Visitar site");
+        Intent intentSite = new Intent(Intent.ACTION_VIEW);
+        String site = aluno.getSite();
+        if(!site.startsWith("http://")) {
+            site = "http://" + site;
+        }
+        intentSite.setData(Uri.parse(site));
+        menuSite.setIntent(intentSite);
+
+        MenuItem itemDeletar = menu.add("Deletar");
+        itemDeletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Log.i("LOG_AGENDA", "onMenuItemClick - ListaAlunosActivity");
-
-                //a view usa o adapter para mostrar os itens
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-                Aluno aluno = (Aluno) listaAlunosView.getItemAtPosition(info.position);
 
                 AlunoDAO dao = new AlunoDAO(ListaAlunosActivity.this);
                 dao.remover(aluno);
@@ -96,11 +165,54 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
                 carregaLista();
 
-                Toast.makeText(ListaAlunosActivity.this, "Aluno " + aluno.getNome() + " excluído!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListaAlunosActivity.this, "Aluno " + aluno.getNome() + " removido!", Toast.LENGTH_SHORT).show();
 
                 return false;
             }
         });
+
+    }
+
+    private void ligarPara() {
+        if(ActivityCompat.checkSelfPermission(ListaAlunosActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            //nesse momento se a permissão ainda não foi dada pelo usuário, iremos solicitar
+            Log.i("LOG_AGENDA", "permission.CALL_PHONE - Not PERMISSION_GRANTED");
+            ActivityCompat.requestPermissions(ListaAlunosActivity.this, new String[]{Manifest.permission.CALL_PHONE}, MY_PERMISSION_CALL_PHONE);
+        } else {
+            Log.i("LOG_AGENDA", "permission.CALL_PHONE - PERMISSION_GRANTED");
+            Intent intentLigar = new Intent(Intent.ACTION_CALL);
+            intentLigar.setData(Uri.parse("tel:" + aluno.getTelefone()));
+            startActivity(intentLigar);
+        }
+    }
+
+    private void verificaPermissaoRecebimentoSMS() {
+        if(ActivityCompat.checkSelfPermission(ListaAlunosActivity.this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            //nesse momento se a permissão ainda não foi dada pelo usuário, iremos solicitar
+            Log.i("LOG_AGENDA", "permission.RECEIVE_SMS - Not PERMISSION_GRANTED");
+            ActivityCompat.requestPermissions(ListaAlunosActivity.this, new String[]{Manifest.permission.RECEIVE_SMS}, MY_RECEIVE_SMS);
+        } else {
+            Log.i("LOG_AGENDA", "permission.RECEIVE_SMS - PERMISSION_GRANTED");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //método chamado após o usuário ter dado alguma permissão na activity atual
+        //identificamos qual foi de acordo com o requestCode
+
+        switch (requestCode) {
+            case MY_PERMISSION_CALL_PHONE: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i("LOG_AGENDA", "onRequestPermissionsResult - requestCode of CALL_PHONE - GRANTED");
+                    ligarPara();
+                } else {
+                    Log.i("LOG_AGENDA", "onRequestPermissionsResult - requestCode of CALL_PHONE - Cancel");
+                }
+            }
+        }
+
     }
 
     @Override
