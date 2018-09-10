@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Schedule Students</string>
+    <string name="tela_1">Student List</string>
+    <string name="btn_add_aluno">+</string>
+    <string name="nome">Name</string>
+    <string name="endereco">Address</string>
+    <string name="telefone">Phone</string>
+    <string name="site">Site</string>
+</resources>

@@ -2,4 +2,8 @@
     <string name="app_name">NovaAgendaAlunos</string>
     <string name="tela_1">Lista Alunos</string>
     <string name="btn_add_aluno">+</string>
+    <string name="nome">Nome</string>
+    <string name="endereco">Endereço</string>
+    <string name="telefone">Telefone</string>
+    <string name="site">Site</string>
 </resources>
