@@ -11,6 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import br.com.fleme.novaagendaalunos.R;
@@ -81,6 +83,14 @@ public class AlunosAdapter extends BaseAdapter {
 
         TextView campoTelefone = view.findViewById(R.id.item_telefone);
         campoTelefone.setText(aluno.getTelefone());
+
+        TextView campoEndereco = view.findViewById(R.id.item_endereco);
+        TextView campoSite = view.findViewById(R.id.item_site);
+
+        if(campoEndereco != null && campoSite != null) {
+            campoEndereco.setText(aluno.getEndereco());
+            campoSite.setText(aluno.getSite());
+        }
 
         ImageView campoFoto = view.findViewById(R.id.item_foto);
         String caminhoFoto = aluno.getCaminhoFoto();
