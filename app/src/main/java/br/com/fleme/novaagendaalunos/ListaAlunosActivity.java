@@ -21,10 +21,8 @@ import android.widget.Toast;
 import java.util.List;
 
 import br.com.fleme.novaagendaalunos.adapter.AlunosAdapter;
-import br.com.fleme.novaagendaalunos.converter.AlunoConverter;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.model.Aluno;
-import br.com.fleme.novaagendaalunos.services.WebClient;
 import br.com.fleme.novaagendaalunos.tasks.EnviaAlunosTask;
 
 public class ListaAlunosActivity extends AppCompatActivity {
@@ -108,9 +106,12 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.menu_enviar_notas:
-
                 new EnviaAlunosTask(this).execute();
+                break;
 
+            case R.id.menu_baixar_provas:
+                Intent intentProvas = new Intent(this, ProvasActivity.class);
+                startActivity(intentProvas);
                 break;
         }
 
