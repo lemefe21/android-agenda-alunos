@@ -6,4 +6,6 @@
     <string name="endereco">Endereço</string>
     <string name="telefone">Telefone</string>
     <string name="site">Site</string>
+    <string name="agenda_alunos">Agenda Alunos</string>
+    <string name="formulario">Formulário</string>
 </resources>

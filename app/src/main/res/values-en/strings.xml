@@ -7,4 +7,6 @@
     <string name="endereco">Address</string>
     <string name="telefone">Phone</string>
     <string name="site">Site</string>
+    <string name="agenda_alunos">Schedule Students</string>
+    <string name="formulario">Registration Form</string>
 </resources>
