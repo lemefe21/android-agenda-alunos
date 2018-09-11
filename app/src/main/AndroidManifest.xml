@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name=".FormularioActivity"
-            android:label="@string/formulario"></activity>
+            android:label="@string/formulario" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -42,7 +42,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ProvasActivity" android:label="@string/prova"></activity>
+        <activity
+            android:name=".ProvasActivity"
+            android:label="@string/prova" />
+        <activity android:name=".DetalhesProvaActivity"></activity>
     </application>
 
 </manifest>

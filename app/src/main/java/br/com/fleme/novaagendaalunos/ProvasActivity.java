@@ -1,5 +1,6 @@
 package br.com.fleme.novaagendaalunos;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +42,12 @@ public class ProvasActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Prova prova = (Prova) parent.getItemAtPosition(position);
                 Toast.makeText(ProvasActivity.this, "Clicou na prova " + prova, Toast.LENGTH_SHORT).show();
+
+                Intent intentDetalhesProva = new Intent(ProvasActivity.this, DetalhesProvaActivity.class);
+                intentDetalhesProva.putExtra("prova", prova);
+
+                startActivity(intentDetalhesProva);
+
             }
         });
 
