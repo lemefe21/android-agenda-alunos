@@ -52,6 +52,13 @@ public class ProvasActivity extends AppCompatActivity {
             detalhesFragment.setArguments(parametros);
 
             tx.replace(R.id.frame_principal, detalhesFragment);
+
+            //add a tx na pilha (por padrão o android só empilha activitys)
+            //ao clicar no "voltar" o android faz um rollback da tx voltando para a tx anterior e não para a activity de lista
+            //null >> posição especifica da pilha
+            //add somente no modo portrait pois em landscape o correto é voltar para a listagem
+            tx.addToBackStack(null);
+
             tx.commit();
 
         } else {
