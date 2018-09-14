@@ -1,10 +1,13 @@
-package br.com.fleme.novaagendaalunos;
+package br.com.fleme.novaagendaalunos.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,8 @@ import android.widget.Toast;
 import java.util.Arrays;
 import java.util.List;
 
+import br.com.fleme.novaagendaalunos.ProvasActivity;
+import br.com.fleme.novaagendaalunos.R;
 import br.com.fleme.novaagendaalunos.model.Prova;
 
 public class ListaProvasFragment extends Fragment {
@@ -47,13 +52,17 @@ public class ListaProvasFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 Prova prova = (Prova) parent.getItemAtPosition(position);
-                Toast.makeText(getContext(), "Clicou na prova " + prova, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Clicou no fragment de prova " + prova, Toast.LENGTH_SHORT).show();
 
-                Intent intentDetalhesProva = new Intent(getContext(), DetalhesProvaActivity.class);
-                intentDetalhesProva.putExtra("prova", prova);
+                //Intent intentDetalhesProva = new Intent(getContext(), DetalhesProvaActivity.class);
+                //intentDetalhesProva.putExtra("prova", prova);
+                //startActivity(intentDetalhesProva);
 
-                startActivity(intentDetalhesProva);
+                //pegamos uma referencia da activity que está utilizando o fragment
+                ProvasActivity provasActivity = (ProvasActivity) getActivity();
+                provasActivity.seleciona(prova);
 
             }
         });
