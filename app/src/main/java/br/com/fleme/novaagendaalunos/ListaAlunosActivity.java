@@ -115,7 +115,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
                 break;
 
             case R.id.menu_mapa:
-                Intent intentMapa = new Intent(this, MapsActivity.class);
+                Intent intentMapa = new Intent(this, MapasActivity.class);
                 startActivity(intentMapa);
                 break;
         }
