@@ -42,6 +42,7 @@ public class ProvasActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
+        //fragment de detalhes não está visivel precisamos do "replace"
         if(!estaNoModoPaisagem()) {
 
             FragmentTransaction tx = fragmentManager.beginTransaction();
@@ -61,10 +62,12 @@ public class ProvasActivity extends AppCompatActivity {
 
             tx.commit();
 
-        } else {
+        } else { //fragment de detalhes já está visivel, só precisamos popular com os dados
+
             //para não substituirmos o fragment principal pelos de detalhes quando estamos em landscape
             DetalhesProvaFragment detalhesFragment = (DetalhesProvaFragment) fragmentManager.findFragmentById(R.id.frame_secundario);
             detalhesFragment.populaCamposCom(prova);
+
         }
 
     }
