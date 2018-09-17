@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+import br.com.fleme.novaagendaalunos.fragments.MapaFragment;
+
 public class MapasActivity extends AppCompatActivity {
 
     @Override
@@ -18,7 +20,7 @@ public class MapasActivity extends AppCompatActivity {
         FragmentTransaction tx = manager.beginTransaction();
 
         //fragment de mapa pronto >> new SupportMapFragment() (do Play Services)
-        tx.replace(R.id.frame_mapa, new SupportMapFragment());
+        tx.replace(R.id.frame_mapa, new MapaFragment());
         tx.commit();
     }
 }
