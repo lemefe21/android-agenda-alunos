@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
+import br.com.fleme.novaagendaalunos.MapasActivity;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
 import br.com.fleme.novaagendaalunos.gps.GPS;
 import br.com.fleme.novaagendaalunos.gps.GPSDelegate;
@@ -51,6 +52,11 @@ public class MapaFragment extends SupportMapFragment implements OnMapReadyCallba
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         gps.cancelaBusca();
         Toast.makeText(getContext(), "GPS mode: Off", Toast.LENGTH_SHORT).show();
     }
@@ -67,12 +73,12 @@ public class MapaFragment extends SupportMapFragment implements OnMapReadyCallba
             googleMap.moveCamera(update);
         }
 
-        AlunoDAO dao = new AlunoDAO(getContext());
-        for(Aluno aluno : dao.buscaAlunos()) {
+        /*AlunoDAO dao = new AlunoDAO(getContext());
+        for (Aluno aluno : dao.buscaAlunos()) {
 
             LatLng coordenada = pegaCoordenada(aluno.getEndereco());
 
-            if(coordenada != null) {
+            if (coordenada != null) {
                 MarkerOptions marcador = new MarkerOptions();
                 marcador.position(coordenada);
                 marcador.title(aluno.getNome());
@@ -80,7 +86,8 @@ public class MapaFragment extends SupportMapFragment implements OnMapReadyCallba
                 googleMap.addMarker(marcador);
             }
         }
-        dao.close();
+        dao.close();*/
+
     }
 
     private LatLng pegaCoordenada(String endereco) {

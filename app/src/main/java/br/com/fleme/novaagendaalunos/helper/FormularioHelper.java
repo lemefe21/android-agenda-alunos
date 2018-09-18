@@ -39,7 +39,9 @@ public class FormularioHelper {
         aluno.setTelefone(campoTelefone.getText().toString());
         aluno.setSite(campoSite.getText().toString());
         aluno.setNota(Double.valueOf(campoNota.getProgress()));
-        aluno.setCaminhoFoto(campoFoto.getTag().toString());
+        if(campoFoto.getTag() != null) {
+            aluno.setCaminhoFoto(campoFoto.getTag().toString());
+        }
         return aluno;
     }
 
