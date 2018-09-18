@@ -31,15 +31,16 @@ public class MapaFragment extends SupportMapFragment implements OnMapReadyCallba
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        //prepara uma instância do google maps
+        getMapAsync(this);
+
     }
 
     @SuppressLint("MissingPermission")
     @Override
     public void onResume() {
         super.onResume();
-
-        //prepara uma instância do google maps
-        getMapAsync(this);
 
         gps = new GPS(this);
         gps.iniciaBusca();

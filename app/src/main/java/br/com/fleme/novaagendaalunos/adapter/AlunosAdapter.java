@@ -17,6 +17,7 @@ import java.util.List;
 
 import br.com.fleme.novaagendaalunos.R;
 import br.com.fleme.novaagendaalunos.model.Aluno;
+import br.com.fleme.novaagendaalunos.utils.OrientadorDeFoto;
 
 public class AlunosAdapter extends BaseAdapter {
 
@@ -95,7 +96,10 @@ public class AlunosAdapter extends BaseAdapter {
         ImageView campoFoto = view.findViewById(R.id.item_foto);
         String caminhoFoto = aluno.getCaminhoFoto();
         if(caminhoFoto != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(caminhoFoto);
+            //Bitmap bitmap = BitmapFactory.decodeFile(caminhoFoto);
+
+            Bitmap bitmap = OrientadorDeFoto.carrega(caminhoFoto);
+
             Bitmap bitmapReduzido = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
             campoFoto.setImageBitmap(bitmapReduzido);
             campoFoto.setScaleType(ImageView.ScaleType.FIT_XY);
