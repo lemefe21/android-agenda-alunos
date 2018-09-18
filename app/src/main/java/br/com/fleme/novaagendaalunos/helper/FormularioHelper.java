@@ -11,6 +11,7 @@ import android.widget.TextView;
 import br.com.fleme.novaagendaalunos.FormularioActivity;
 import br.com.fleme.novaagendaalunos.R;
 import br.com.fleme.novaagendaalunos.model.Aluno;
+import br.com.fleme.novaagendaalunos.utils.OrientadorDeFoto;
 
 public class FormularioHelper {
 
@@ -38,7 +39,9 @@ public class FormularioHelper {
         aluno.setTelefone(campoTelefone.getText().toString());
         aluno.setSite(campoSite.getText().toString());
         aluno.setNota(Double.valueOf(campoNota.getProgress()));
-        aluno.setCaminhoFoto(campoFoto.getTag().toString());
+        if(campoFoto.getTag() != null) {
+            aluno.setCaminhoFoto(campoFoto.getTag().toString());
+        }
         return aluno;
     }
 
@@ -56,7 +59,10 @@ public class FormularioHelper {
 
         //para alunos sem fotos já cadastrados
         if(caminhoFoto != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(caminhoFoto);
+            //Bitmap bitmap = BitmapFactory.decodeFile(caminhoFoto);
+
+            Bitmap bitmap = OrientadorDeFoto.carrega(caminhoFoto);
+
             //bitmap não suporta imagens com resolução muito alta
             Bitmap bitmapReduzido = Bitmap.createScaledBitmap(bitmap, 300, 300, true);
             campoFoto.setImageBitmap(bitmapReduzido);

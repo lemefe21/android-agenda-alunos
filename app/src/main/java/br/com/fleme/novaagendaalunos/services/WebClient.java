@@ -3,7 +3,6 @@ package br.com.fleme.novaagendaalunos.services;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;

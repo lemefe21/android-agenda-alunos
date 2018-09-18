@@ -36,6 +36,7 @@ public class FormularioActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
         Aluno aluno = (Aluno) intent.getSerializableExtra("aluno_selecionado");
+
         if(aluno != null) {
             helper.preencheFormulario(aluno);
         }

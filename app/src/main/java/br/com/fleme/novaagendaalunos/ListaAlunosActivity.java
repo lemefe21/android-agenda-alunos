@@ -1,11 +1,14 @@
 package br.com.fleme.novaagendaalunos;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,13 +21,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.fleme.novaagendaalunos.adapter.AlunosAdapter;
-import br.com.fleme.novaagendaalunos.converter.AlunoConverter;
 import br.com.fleme.novaagendaalunos.dao.AlunoDAO;
+import br.com.fleme.novaagendaalunos.listener.RemoveClickListener;
 import br.com.fleme.novaagendaalunos.model.Aluno;
-import br.com.fleme.novaagendaalunos.services.WebClient;
 import br.com.fleme.novaagendaalunos.tasks.EnviaAlunosTask;
 
 public class ListaAlunosActivity extends AppCompatActivity {
@@ -33,6 +36,8 @@ public class ListaAlunosActivity extends AppCompatActivity {
     private final int MY_PERMISSION_CALL_PHONE = 123;
     private final int MY_RECEIVE_SMS = 456;
     private Aluno aluno;
+    private List<Aluno> alunos;
+    AlunosAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,22 +83,41 @@ public class ListaAlunosActivity extends AppCompatActivity {
         verificaPermissaoRecebimentoSMS();
 
         registerForContextMenu(listaAlunosView);
-
+        createEmptyAdapter();
     }
 
-    private void carregaLista() {
-        Log.i("LOG_AGENDA", "carregaLista - ListaAlunosActivity");
+    private void createEmptyAdapter(){
+        alunos = new ArrayList<>();
+        adapter = new AlunosAdapter(alunos, this);
+        listaAlunosView.setAdapter(adapter);
+    }
 
-        AlunoDAO dao = new AlunoDAO(this);
-        List<Aluno> alunos = dao.buscaAlunos();
-        dao.close();
+    public void carregaLista() {
+        Log.i("LOG_AGENDA", "carregaLista - ListaAlunosActivity");
+        try{
+
+            AlunoDAO dao = new AlunoDAO(this);
+            alunos.clear();
+            alunos.addAll(dao.buscaAlunos());
+            dao.close();
+
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
+
+
+        }catch (Exception e){
+            String erro = e.getMessage();
+        }
 
         //adapter >> responsável por converter os objetos do Java em um view do Android
         //ArrayAdapter utiliza o toString do objeto Java para mostar a informação na View
         //ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
 
-        AlunosAdapter adapter = new AlunosAdapter(alunos, this);
-        listaAlunosView.setAdapter(adapter);
     }
 
     @Override
@@ -108,9 +132,17 @@ public class ListaAlunosActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.menu_enviar_notas:
-
                 new EnviaAlunosTask(this).execute();
+                break;
 
+            case R.id.menu_baixar_provas:
+                Intent intentProvas = new Intent(this, ProvasActivity.class);
+                startActivity(intentProvas);
+                break;
+
+            case R.id.menu_mapa:
+                Intent intentMapa = new Intent(this, MapasActivity.class);
+                startActivity(intentMapa);
                 break;
         }
 
@@ -154,22 +186,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
         menuSite.setIntent(intentSite);
 
         MenuItem itemDeletar = menu.add("Deletar");
-        itemDeletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Log.i("LOG_AGENDA", "onMenuItemClick - ListaAlunosActivity");
-
-                AlunoDAO dao = new AlunoDAO(ListaAlunosActivity.this);
-                dao.remover(aluno);
-                dao.close();
-
-                carregaLista();
-
-                Toast.makeText(ListaAlunosActivity.this, "Aluno " + aluno.getNome() + " removido!", Toast.LENGTH_SHORT).show();
-
-                return false;
-            }
-        });
+        itemDeletar.setOnMenuItemClickListener(new RemoveClickListener(this, aluno));
 
     }
 
